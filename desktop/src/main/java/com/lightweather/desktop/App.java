@@ -111,7 +111,10 @@ public final class App {
         int height = Integer.parseInt(arg(a, "--height", "1560"));
         String path = arg(a, "--cache", null);
 
-        Theme theme = "dark".equals(themeName) ? Theme.dark() : Theme.light();
+        String styleName = arg(a, "--style", "standard");
+        int style = "glass".equals(styleName) ? Theme.GLASS
+                : "minimal".equals(styleName) ? Theme.MINIMAL : Theme.STANDARD;
+        Theme theme = "dark".equals(themeName) ? Theme.dark(style) : Theme.light(style);
         WeatherData data = null;
         if (path != null) {
             try {

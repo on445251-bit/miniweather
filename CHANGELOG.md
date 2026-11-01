@@ -4,6 +4,20 @@
 
 ---
 
+## v3.0.0 — 多数据源 · Material 3 · Windows 桌面同步
+- 🔀 **多天气数据源（全端）**：新增 wttr.in 与 MET Norway 两个渠道，菜单可选「自动 / Open-Meteo / wttr.in / MET Norway」；自动模式按 Open-Meteo → wttr.in → MET Norway 依次回退，任一源失败自动换源（Android 新增 `WeatherCodes.fromWwo` / `fromMetSymbol`，桌面版新增 `SunCalc`）
+- 🏷 **数据源标识**：实况卡右上角显示本次数据来自哪个渠道
+- 🗺 **省份/地区修正**：地理编码改为「精确同名优先 → 中国城市优先 → 人口降序 → 行政级别」排序，中文无结果自动用英文重试；`青岛` 不再错配到大连，`北京`、`台北` 可正常搜索；省份名自动补全「省 / 自治区 / 特别行政区」后缀
+- 🎨 **Material 3 重构（Android）**：新增完整 M3 令牌（surface / surfaceVariant / onSurface / outline / primaryContainer）+ 夜间配色；搜索框改为 M3 卡片式，内容卡片圆角 20–24dp，全部卡片零阴影靠色阶分层
+- 🖼 **界面风格（全端）**：标准 / 玻璃 / 极简三种风格可切换，联动卡片底色、圆角、描边与背景遮罩强度
+- ☀️ **晴天可读性**：新增全屏渐变遮罩，晴天自动加深；实况卡改为深蓝半透明底 + 白字，强光下不再「白底白字」
+- 👆 **刷新手势修复**：`SwipeRefreshLayout` 直接包裹 `NestedScrollView`，向上滑动不再被误判为下拉刷新，可正常滚动页面
+- 🪟 **Windows 桌面版同步**：多数据源、三种界面风格、状态栏显示数据源、页脚显示实际来源
+- 🔐 **桌面 TLS 回退**：遇到 `handshake_failure` / 证书链问题时自动用宽松上下文重试一次（仍加密），企业代理或根证书缺失环境可正常取数
+- 🔧 **桌面「重新加载」按钮修复**：空态按钮按可见高度居中并夹紧，窗口较矮时不再被裁掉一半
+- 📱 **图标统一**：Android 自适应图标改为与 Windows 版同一设计（蓝渐变圆角底 + 黄太阳光芒 + 白云），并支持 Android 13 主题图标（monochrome）
+- 🔢 版本号 Android 2.0.0 → 3.0.0（versionCode 3），桌面版 2.1.0 → 3.0.0
+
 ## v2.1.0 — Windows 桌面版（LightWeather.exe）
 - 🖥 **新增 Windows 桌面客户端**（`desktop/`）：纯 Java 17 + Swing，零第三方依赖，`jpackage` 打包为免安装 `LightWeather.exe`（自带精简 JRE）
 - 🎨 **全自绘界面**：卡片、7 天温度曲线、天气图标、悬停高亮全部由 Java2D 手绘，无 UI 框架

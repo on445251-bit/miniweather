@@ -75,7 +75,8 @@ public class WeatherWidget extends AppWidgetProvider {
         if (loc == null) return;
         String city = WeatherPrefs.getCurrent(ctx);
         io.execute(() -> {
-            WeatherData d = WeatherClient.fetch(loc[0], loc[1], city);
+            WeatherData d = WeatherClient.fetchAll(
+                    WeatherPrefs.getProvider(ctx), loc[0], loc[1], city, "");
             if (d == null) return;
             WeatherPrefs.saveFull(ctx, d);
             ui.post(() -> {

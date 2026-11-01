@@ -303,17 +303,21 @@ public class WeatherPanel extends JPanel implements Scrollable {
     }
 
     private void paintEmpty(Graphics2D g, int cw) {
-        int y = Math.max(160, getHeight() / 2 - 10);
+        // 只在实际可见高度内居中，避免窗口较矮时按钮被裁掉一半
+        int visible = Math.max(200, Math.min(getHeight(), Math.max(260, preferredHeightFor(getWidth() + 2 * PAD))));
+        int y = Math.max(90, visible / 2 - 20);
         String msg = loading ? "正在获取天气数据…" : error == null ? "输入城市名称开始查询" : error;
         g.setFont(theme.h2);
         g.setColor(theme.sub);
         FontMetrics fm = g.getFontMetrics();
-        g.drawString(msg, PAD + (cw - fm.stringWidth(msg)) / 2, y);
+        int tw = fm.stringWidth(msg);
+        int tx = PAD + Math.max(0, (cw - tw) / 2);
+        g.drawString(msg, tx, y);
         if (!loading && error != null) {
             int bw = 108;
             int bh = 34;
-            int bx = PAD + (cw - bw) / 2;
-            int by = y + 22;
+            int bx = PAD + Math.max(0, (cw - bw) / 2);
+            int by = Math.min(y + 20, visible - bh - 16);
             g.setColor(theme.accent);
             g.fill(new RoundRectangle2D.Double(bx, by, bw, bh, 10, 10));
             g.setColor(Color.WHITE);
@@ -756,10 +760,11 @@ public class WeatherPanel extends JPanel implements Scrollable {
     private void paintFooter(Graphics2D g, Card c) {
         g.setFont(theme.small);
         g.setColor(theme.sub);
-        String left = "数据来源 Open-Meteo · 无需 API Key";
+        String src = data == null || data.source == null || data.source.isEmpty() ? "Open-Meteo" : data.source;
+        String left = "数据来源 " + src + " · 无需 API Key";
         g.drawString(left, c.x + 4, c.y + 24);
         if (data != null) {
-            String right = "轻天气桌面版 v2.1 · " + timeText(data.updatedAt);
+            String right = "轻天气桌面版 v3.0 · " + timeText(data.updatedAt);
             FontMetrics fm = g.getFontMetrics();
             g.drawString(right, c.x + c.w - fm.stringWidth(right) - 4, c.y + 24);
         }
@@ -776,7 +781,7 @@ public class WeatherPanel extends JPanel implements Scrollable {
     }
 
     private RoundRectangle2D round(Card c) {
-        return new RoundRectangle2D.Double(c.x, c.y, c.w, c.h, RADIUS, RADIUS);
+        return new RoundRectangle2D.Double(c.x, c.y, c.w, c.h, theme.radius, theme.radius);
     }
 
     private String clip(Graphics2D g, String text, int maxWidth) {

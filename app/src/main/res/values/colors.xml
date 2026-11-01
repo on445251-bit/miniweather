@@ -3,12 +3,25 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- 主题色 -->
+    <!-- 品牌色 -->
     <color name="seed">#1E88E5</color>
     <color name="seed_dark">#1565C0</color>
+    <color name="accent">#FFB300</color>
 
-    <!-- 半透明卡片背景（日间） -->
+    <!-- Material 3 语义色（日间） -->
+    <color name="m3_surface">#FFFFFFFF</color>
+    <color name="m3_surface_variant">#E8EEF6</color>
+    <color name="m3_on_surface">#111827</color>
+    <color name="m3_on_surface_variant">#5B6B7F</color>
+    <color name="m3_outline">#C7D2DF</color>
+    <color name="m3_primary_container">#D6E7FB</color>
+    <color name="m3_on_primary_container">#0B3A66</color>
+
+    <!-- 半透明卡片（旧样式兼容） -->
     <color name="card_bg">#40FFFFFF</color>
     <!-- 顶部状态栏图标颜色 -->
     <color name="status_bar_scrim">#00000000</color>
+
+    <!-- Hero 卡（深蓝底 + 白字，晴天也清晰） -->
+    <color name="hero_bg">#E6165FA8</color>
 </resources>

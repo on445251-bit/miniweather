@@ -88,8 +88,18 @@ public final class Json {
         return o instanceof Number ? ((Number) o).doubleValue() : def;
     }
 
+    /** 便捷重载：按 key 取数值 */
+    public static double num(Object o, String key, double def) {
+        return d(o, key, def);
+    }
+
     public static int inum(Object o, int def) {
         return o instanceof Number ? (int) Math.round(((Number) o).doubleValue()) : def;
+    }
+
+    /** 便捷重载：按 key 取整数 */
+    public static int inum(Object o, String key, int def) {
+        return i(o, key, def);
     }
 
     private static boolean isInt(String s) {

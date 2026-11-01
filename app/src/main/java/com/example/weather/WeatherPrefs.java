@@ -48,6 +48,24 @@ public final class WeatherPrefs {
         sp(c).edit().putInt("theme_mode", mode).apply();
     }
 
+    /** 数据源：0 自动 / 1 Open-Meteo / 2 wttr.in / 3 MET Norway */
+    public static int getProvider(Context c) {
+        return sp(c).getInt("provider", 0);
+    }
+
+    public static void setProvider(Context c, int id) {
+        sp(c).edit().putInt("provider", id).apply();
+    }
+
+    /** 界面风格：0 标准（Material You） / 1 玻璃 / 2 极简 */
+    public static int getUiStyle(Context c) {
+        return sp(c).getInt("ui_style", 0);
+    }
+
+    public static void setUiStyle(Context c, int id) {
+        sp(c).edit().putInt("ui_style", id).apply();
+    }
+
     public static boolean isF(Context c) {
         return "F".equals(sp(c).getString(K_UNIT, "C"));
     }
@@ -199,16 +217,23 @@ public final class WeatherPrefs {
     }
 
     public static void addCity(Context c, String n, double la, double lo) {
+        addCity(c, n, "", la, lo);
+    }
+
+    public static void addCity(Context c, String n, String area, double la, double lo) {
         List<City> list = getCities(c);
         for (City x : list) {
             if (x.name.equals(n)) {
                 x.lat = la;
                 x.lon = lo;
+                if (area != null && !area.isEmpty()) x.area = area;
                 save(list, c);
                 return;
             }
         }
-        list.add(new City(n, la, lo));
+        City nc = new City(n, la, lo);
+        nc.area = area == null ? "" : area;
+        list.add(nc);
         save(list, c);
     }
 
@@ -264,6 +289,8 @@ public final class WeatherPrefs {
     private static JSONObject toJson(WeatherData d) throws Exception {
         JSONObject o = new JSONObject();
         o.put("city", d.city);
+        o.put("area", d.area == null ? "" : d.area);
+        o.put("src", d.source == null ? "" : d.source);
         o.put("lat", d.lat);
         o.put("lon", d.lon);
         o.put("t", d.currentTemp);
@@ -313,6 +340,8 @@ public final class WeatherPrefs {
     private static WeatherData fromJson(JSONObject o) {
         WeatherData d = new WeatherData();
         d.city = o.optString("city", "");
+        d.area = o.optString("area", "");
+        d.source = o.optString("src", "");
         d.lat = o.optDouble("lat", 0);
         d.lon = o.optDouble("lon", 0);
         d.currentTemp = o.optInt("t", 0);
@@ -402,6 +431,7 @@ public final class WeatherPrefs {
     /** 城市数据 */
     public static class City {
         public String name;
+        public String area = "";
         public double lat, lon;
 
         City(String n, double la, double lo) {
@@ -410,16 +440,25 @@ public final class WeatherPrefs {
             lon = lo;
         }
 
+        /** 「杭州 · 浙江省」 */
+        public String display() {
+            return area == null || area.isEmpty() || area.equals(name)
+                    ? name : name + " · " + area;
+        }
+
         JSONObject toJson() {
             try {
-                return new JSONObject().put("n", name).put("la", lat).put("lo", lon);
+                return new JSONObject().put("n", name).put("la", lat).put("lo", lon)
+                        .put("ar", area == null ? "" : area);
             } catch (Exception e) {
                 return new JSONObject();
             }
         }
 
         static City from(JSONObject o) {
-            return new City(o.optString("n"), o.optDouble("la"), o.optDouble("lo"));
+            City c = new City(o.optString("n"), o.optDouble("la"), o.optDouble("lo"));
+            c.area = o.optString("ar", "");
+            return c;
         }
     }
 }

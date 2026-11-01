@@ -1,14 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- 夜间主题 -->
+    <!-- 夜间主题（Material Design 3 语义色） -->
     <style name="Theme.WeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/seed_dark</item>
-        <item name="android:colorBackground">#121212</item>
-        <item name="colorSurface">#1E1E1E</item>
-        <item name="colorOnSurface">#E0E0E0</item>
-        <item name="colorOnBackground">#E0E0E0</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/m3_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/m3_on_primary_container</item>
+        <item name="colorSecondary">@color/seed</item>
+        <item name="colorSurface">@color/m3_surface</item>
+        <item name="colorOnSurface">@color/m3_on_surface</item>
+        <item name="colorSurfaceVariant">@color/m3_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/m3_on_surface_variant</item>
+        <item name="colorOutline">@color/m3_outline</item>
+        <item name="android:colorBackground">@color/m3_surface</item>
+        <item name="colorOnBackground">@color/m3_on_surface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
-
-    <color name="card_bg">#401E1E1E</color>
 
     <!-- 全屏闪屏主题（夜间） -->
     <style name="Theme.WeatherApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">

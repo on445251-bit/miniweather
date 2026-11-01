@@ -4,6 +4,9 @@ package com.lightweather.desktop;
 public class WeatherData {
 
     public String city = "";
+    public String area = "";
+    /** 实际取到数据的数据源名称（Open-Meteo / wttr.in / MET Norway） */
+    public String source = "";
     public double lat, lon;
 
     // 当前实况

@@ -1,14 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 与 Windows 桌面版一致的图标：黄太阳（带光芒）+ 白云 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- 太阳光芒 -->
+    <path
+        android:pathData="M64,20v7M64,53v7M44,40h7M77,40h7M49.9,25.9l4.9,4.9M73.2,49.2l4.9,4.9M78.1,25.9l-4.9,4.9M54.8,49.2l-4.9,4.9"
+        android:strokeColor="#FFFFC72C"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+
     <!-- 太阳 -->
     <path
-        android:fillColor="#FFC107"
-        android:pathData="M54,34a20,20 0,1 1,-0.01 0z" />
-    <!-- 云 -->
+        android:fillColor="#FFFFC72C"
+        android:pathData="M64,29.5a10.5,10.5 0 1,1 0,21a10.5,10.5 0 1,1 0,-21z" />
+
+    <!-- 白云 -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M38,72a14,14 0,1 1,4 -27a18,18 0,1 1,29 8a12,12 0,1 1,-2 19z" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M45,57a11,11 0 1,1 0,22a11,11 0 1,1 0,-22z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M59,50a15,15 0 1,1 0,30a15,15 0 1,1 0,-30z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M72,57a10,10 0 1,1 0,20a10,10 0 1,1 0,-20z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M45,66h27v13h-27z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M45,79h27a7,7 0 0,1 -7,7h-13a7,7 0 0,1 -7,-7z" />
 </vector>

@@ -3,6 +3,7 @@ package com.example.weather;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.weather.databinding.ActivityMainBinding;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private double lastLat = Double.NaN;
     private double lastLon = Double.NaN;
     private String lastCity = "";
+    private String lastArea = "";
 
     /** 最近一次成功渲染的数据，用于切换单位时零网络重绘 */
     private WeatherData current;
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         b.btnLoc.setOnClickListener(v -> locate());
 
         b.swipe.setOnRefreshListener(() -> {
-            if (!Double.isNaN(lastLat)) load(lastLat, lastLon, lastCity);
+            if (!Double.isNaN(lastLat)) load(lastLat, lastLon, lastCity, lastArea);
             else {
                 b.swipe.setRefreshing(false);
                 locate();
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 lastLon = loc[1];
                 lastCity = "我的位置";
                 b.etCity.setText("我的位置");
-                load(loc[0], loc[1], "我的位置");
+                load(loc[0], loc[1], "我的位置", "");
                 return;
             }
         }
@@ -124,8 +127,9 @@ public class MainActivity extends AppCompatActivity {
             lastLat = c.lat;
             lastLon = c.lon;
             lastCity = c.name;
+            lastArea = c.area;
             b.etCity.setText(c.name);
-            load(c.lat, c.lon, c.name);
+            load(c.lat, c.lon, c.name, c.area);
             return;
         }
         b.etCity.setText("北京");
@@ -137,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (current != null && !Double.isNaN(lastLat)
                 && WeatherPrefs.isCacheStale(this, AUTO_REFRESH_MS)) {
-            load(lastLat, lastLon, lastCity);
+            load(lastLat, lastLon, lastCity, lastArea);
         }
     }
 
@@ -165,6 +169,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_theme) {
             pickTheme();
+            return true;
+        } else if (id == R.id.action_provider) {
+            pickProvider();
+            return true;
+        } else if (id == R.id.action_ui_style) {
+            pickUiStyle();
             return true;
         } else if (id == R.id.action_share) {
             shareShot();
@@ -225,8 +235,44 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void showAbout() {
+    /** 选择天气数据源（自动 = 依次回退） */
+    private void pickProvider() {
+        String[] items = {
+                getString(R.string.provider_auto),
+                getString(R.string.provider_openmeteo),
+                getString(R.string.provider_wttr),
+                getString(R.string.provider_metno)};
+        int checked = WeatherPrefs.getProvider(this);
         new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.menu_provider)
+                .setSingleChoiceItems(items, checked, (d, which) -> {
+                    d.dismiss();
+                    WeatherPrefs.setProvider(this, which);
+                    if (!Double.isNaN(lastLat)) load(lastLat, lastLon, lastCity, lastArea);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /** 选择界面风格（标准 / 玻璃 / 极简） */
+    private void pickUiStyle() {
+        String[] items = {
+                getString(R.string.ui_standard),
+                getString(R.string.ui_glass),
+                getString(R.string.ui_minimal)};
+        int checked = WeatherPrefs.getUiStyle(this);
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.menu_ui)
+                .setSingleChoiceItems(items, checked, (d, which) -> {
+                    d.dismiss();
+                    WeatherPrefs.setUiStyle(this, which);
+                    rerender();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showAbout() {        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.about_title)
                 .setMessage(R.string.about_text)
                 .setPositiveButton(android.R.string.ok, null)
@@ -258,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.nav_myloc) {
             double[] loc = WeatherPrefs.getLoc(this);
             if (loc != null) {
-                switchTo("我的位置", loc[0], loc[1]);
+                switchTo("我的位置", "", loc[0], loc[1]);
             } else {
                 locate();
             }
@@ -274,22 +320,26 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id >= CITY_ID_BASE) {
-            String name = item.getTitle().toString();
-            WeatherPrefs.City c = WeatherPrefs.findCity(this, name);
-            if (c != null) switchTo(name, c.lat, c.lon);
+            List<WeatherPrefs.City> cities = WeatherPrefs.getCities(this);
+            int idx = id - CITY_ID_BASE;
+            if (idx >= 0 && idx < cities.size()) {
+                WeatherPrefs.City c = cities.get(idx);
+                switchTo(c.name, c.area, c.lat, c.lon);
+            }
             closeDrawer();
             return true;
         }
         return false;
     }
 
-    private void switchTo(String name, double lat, double lon) {
+    private void switchTo(String name, String area, double lat, double lon) {
         WeatherPrefs.setCurrent(this, name);
         lastLat = lat;
         lastLon = lon;
         lastCity = name;
+        lastArea = area == null ? "" : area;
         b.etCity.setText(name);
-        load(lat, lon, name);
+        load(lat, lon, name, lastArea);
     }
 
     private void closeDrawer() {
@@ -306,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
         String cur = WeatherPrefs.getCurrent(this);
         int i = CITY_ID_BASE;
         for (WeatherPrefs.City c : cities) {
-            MenuItem mi = menu.add(R.id.grp_cities, i++, Menu.NONE, c.name);
+            MenuItem mi = menu.add(R.id.grp_cities, i++, Menu.NONE, c.display());
             mi.setIcon(R.drawable.ic_loc);
             mi.setChecked(c.name.equals(cur));
         }
@@ -322,10 +372,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         String[] names = new String[cities.size()];
-        for (int i = 0; i < cities.size(); i++) names[i] = cities.get(i).name;
+        for (int i = 0; i < cities.size(); i++) names[i] = cities.get(i).display();
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.manage_title)
-                .setItems(names, (d, which) -> confirmDelete(names[which]))
+                .setItems(names, (d, which) -> confirmDelete(cities.get(which).name))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
@@ -353,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.city_exists, name), Toast.LENGTH_SHORT).show();
             return;
         }
-        WeatherPrefs.addCity(this, name, lastLat, lastLon);
+        WeatherPrefs.addCity(this, name, lastArea, lastLat, lastLon);
         WeatherPrefs.setCurrent(this, name);
         rebuildCityMenu();
         Toast.makeText(this, getString(R.string.city_added, name), Toast.LENGTH_SHORT).show();
@@ -380,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (list.size() == 1) {
                     WeatherClient.Geo g = list.get(0);
-                    load(g.lat, g.lon, g.name);
+                    load(g.lat, g.lon, g.name, g.area);
                 } else {
                     showLoading(false);
                     b.swipe.setRefreshing(false);
@@ -397,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.multi_match, keyword))
                 .setItems(labels, (d, which) -> {
                     WeatherClient.Geo g = list.get(which);
-                    load(g.lat, g.lon, g.name);
+                    load(g.lat, g.lon, g.name, g.area);
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
@@ -423,7 +473,7 @@ public class MainActivity extends AppCompatActivity {
                     onLoadFailed();
                     return;
                 }
-                load(loc.getLatitude(), loc.getLongitude(), "我的位置");
+                load(loc.getLatitude(), loc.getLongitude(), "我的位置", "");
             });
         });
     }
@@ -445,10 +495,11 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private void load(double lat, double lon, String city) {
+    private void load(double lat, double lon, String city, String area) {
         if (current == null) showLoading(true);
+        final int provider = WeatherPrefs.getProvider(this);
         io.execute(() -> {
-            WeatherData d = WeatherClient.fetchAll(lat, lon, city);
+            WeatherData d = WeatherClient.fetchAll(provider, lat, lon, city, area);
             ui.post(() -> {
                 showLoading(false);
                 b.swipe.setRefreshing(false);
@@ -458,6 +509,7 @@ public class MainActivity extends AppCompatActivity {
                     lastLat = d.lat;
                     lastLon = d.lon;
                     lastCity = d.city;
+                    lastArea = d.area;
                     render(d, false);
                 }
             });
@@ -501,9 +553,22 @@ public class MainActivity extends AppCompatActivity {
         b.scroll.setVisibility(View.VISIBLE);
 
         boolean night = !d.isDay;
+        applyUiStyle(night, d.currentCode == 0 || d.currentCode == 1);
 
         // ---------- 当前 ----------
         b.tvCity.setText(d.city);
+        if (d.area == null || d.area.isEmpty() || d.area.equals(d.city)) {
+            b.tvArea.setVisibility(View.GONE);
+        } else {
+            b.tvArea.setVisibility(View.VISIBLE);
+            b.tvArea.setText(d.area);
+        }
+        if (d.source == null || d.source.isEmpty()) {
+            b.tvSource.setVisibility(View.GONE);
+        } else {
+            b.tvSource.setVisibility(View.VISIBLE);
+            b.tvSource.setText(d.source);
+        }
         b.ivIcon.setImageResource(WeatherCodes.icon(d.currentCode, night));
         b.tvTemp.setText(WeatherPrefs.fmtTempDeg(d.currentTemp, this));
         b.tvDesc.setText(WeatherCodes.desc(d.currentCode, this));
@@ -630,6 +695,31 @@ public class MainActivity extends AppCompatActivity {
                         + "\n首要污染物：%s",
                 d.pm25, d.pm10, d.ozone, d.no2, d.so2, dom);
         b.tvPollutants.setText(pollutants);
+    }
+
+    /** 应用界面风格：卡片圆角/底色/描边与背景遮罩强度 */
+    private void applyUiStyle(boolean night, boolean bright) {
+        int style = WeatherPrefs.getUiStyle(this);
+        MaterialCardView[] cards = {
+                b.searchCard, b.cardAlert, b.cardAir,
+                b.cardHourly, b.cardCurve, b.cardDaily, b.cardSun, b.cardLife};
+        for (MaterialCardView c : cards) {
+            UiStyle.applyCard(c, style, night, this);
+        }
+        // Hero 卡保持自有的深蓝底，玻璃风格时更通透一些
+        if (style == UiStyle.GLASS) {
+            b.cardHero.setCardBackgroundColor(
+                    ColorStateList.valueOf(night ? 0xCC0E2A47 : 0xCC165FA8));
+        } else {
+            b.cardHero.setCardBackgroundColor(
+                    ColorStateList.valueOf(getColor(R.color.hero_bg)));
+        }
+
+        // 晴天背景太亮时加深遮罩，保证文字对比度
+        int alpha = night ? 80 : (bright ? 255 : (style == UiStyle.GLASS ? 200 : 165));
+        if (b.scrim.getBackground() != null) {
+            b.scrim.getBackground().mutate().setAlpha(alpha);
+        }
     }
 
     /** 根据天气代码 + 昼夜切换渐变背景 + 动画 */

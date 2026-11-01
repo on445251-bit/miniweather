@@ -100,6 +100,24 @@ public final class Prefs {
         p.setProperty("theme", mode == 1 ? "light" : mode == 2 ? "dark" : "auto");
     }
 
+    /** 界面风格：0 标准，1 玻璃，2 极简 */
+    public int uiStyle() {
+        return i("ui_style", 0);
+    }
+
+    public void setUiStyle(int style) {
+        p.setProperty("ui_style", String.valueOf(style));
+    }
+
+    /** 数据源：0 自动，1 Open-Meteo，2 wttr.in，3 MET Norway */
+    public int provider() {
+        return i("provider", 0);
+    }
+
+    public void setProvider(int provider) {
+        p.setProperty("provider", String.valueOf(provider));
+    }
+
     public boolean tempF() {
         return "F".equals(p.getProperty("temp_unit", "C"));
     }

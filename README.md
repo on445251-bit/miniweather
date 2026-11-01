@@ -6,8 +6,8 @@
 
 一个**极轻量**的天气应用，同一仓库两份实现：**Android**（Java + ViewBinding）与 **Windows 桌面版**（纯 Java 17 Swing，打包成 `LightWeather.exe`）。零第三方 SDK、零 API Key。
 
-> v2.0 起主打「看天气一眼就够」：当前实况、逐时降水、7 天温度曲线、空气质量、生活指数、天气提醒，全部在一屏内。
-> v2.1 新增 **Windows 桌面 EXE 版**（`desktop/`），与手机端功能对齐。
+> v3.0 起主打「看天气一眼就够」：当前实况、逐时降水、7 天温度曲线、空气质量、生活指数、天气提醒，全部在一屏内。
+> v3.0 新增 **Material 3 界面**、标准/玻璃/极简三种风格、**三个天气数据源自动回退**、省份纠错、晴天可读性修复；Android 与 **Windows 桌面 EXE 版**（`desktop/`）功能同步。
 
 ## 📦 下载 APK
 - **GitHub Actions 自动构建**：进 [Actions](https://github.com/on445251-bit/miniweather/actions) 页面，点最新的 `Build WeatherApp APK` 运行，右侧 **Artifacts** 下载 `weather-app-release`（解压得到 `app-debug.apk` / `app-release-unsigned.apk`）。
@@ -24,7 +24,7 @@
 | --- | --- |
 | ![浅色](desktop/docs/preview-light.png) | ![深色](desktop/docs/preview-dark.png) |
 
-桌面版特性：同 Android 端的实况/六宫格、7 天温度曲线、空气质量、生活指数、天气提醒、日出日落与昼长、逐时（点击查看详情）、多城市侧栏、三种单位切换、明暗主题、离线缓存、10 分钟自动刷新；界面全部由 Java2D 手绘（无 UI 框架、无第三方库）。
+桌面版特性：同 Android 端的实况/六宫格、7 天温度曲线、空气质量、生活指数、天气提醒、日出日落与昼长、逐时（点击查看详情）、多城市侧栏、三种单位切换、明暗主题、**三种界面风格**、**多数据源**、离线缓存、10 分钟自动刷新；界面全部由 Java2D 手绘（无 UI 框架、无第三方库）。
 
 ## 特性
 
@@ -34,6 +34,12 @@
 - 🌡 **三种温度单位**：℃ / ℉
 - 🌀 **四种风速单位**：km/h、m/s、mph、蒲福风级
 - 🧭 **三种气压单位**：hPa、mmHg、inHg
+
+### 多数据源与外观
+- 🔀 **三个天气数据源**：Open-Meteo（默认）、wttr.in、MET Norway；菜单可选固定源，或「自动」按顺序回退，某个源挂掉自动换下一个
+- 🏷 实况卡显示本次数据来自哪个源
+- 🎨 **三种界面风格**：标准 / 玻璃 / 极简，与明暗主题正交组合
+- 🧩 **Material 3**：完整 M3 色板（surface / surfaceVariant / outline / primaryContainer）+ 动态深浅适配
 
 ### 预报
 - 🕑 **24 小时逐时预报**：温度 + 昼夜图标 + **降水概率**，点击任意小时查看该时刻详情（温度/降水概率/降水量/湿度/风速）

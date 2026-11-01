@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 全屏可读性遮罩：顶部略深（衬白色标题），中部最浅（露出背景动画），底部再压一点 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:centerColor="#14000000"
+        android:endColor="#4D000000"
+        android:startColor="#80000000"
+        android:type="linear" />
+</shape>

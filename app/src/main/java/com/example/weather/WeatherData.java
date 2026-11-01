@@ -8,6 +8,10 @@ public class WeatherData {
 
     /** 城市展示名 */
     public String city = "";
+    /** 所属省 / 州（例如「浙江省」），用于避免同名城市混淆 */
+    public String area = "";
+    /** 数据来源名称（Open-Meteo / wttr.in / MET Norway） */
+    public String source = "";
     /** 纬度 / 经度 */
     public double lat, lon;
 

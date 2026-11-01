@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material 3 语义色（夜间） -->
+    <color name="m3_surface">#FF1B212B</color>
+    <color name="m3_surface_variant">#FF252C38</color>
+    <color name="m3_on_surface">#FFECEFF4</color>
+    <color name="m3_on_surface_variant">#FF9AA7B8</color>
+    <color name="m3_outline">#FF38414F</color>
+    <color name="m3_primary_container">#FF1E3A5C</color>
+    <color name="m3_on_primary_container">#FFCFE3FF</color>
+
+    <color name="card_bg">#401E1E1E</color>
+    <color name="hero_bg">#E60E2A47</color>
+</resources>

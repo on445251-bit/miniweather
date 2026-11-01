@@ -87,13 +87,14 @@ public class MainFrame extends JFrame {
     }
 
     private Theme resolveTheme() {
+        int style = prefs.uiStyle();
         switch (prefs.themeMode()) {
             case 1:
-                return Theme.light();
+                return Theme.light(style);
             case 2:
-                return Theme.dark();
+                return Theme.dark(style);
             default:
-                return Theme.systemPrefersDark() ? Theme.dark() : Theme.light();
+                return Theme.systemPrefersDark() ? Theme.dark(style) : Theme.light(style);
         }
     }
 
@@ -201,16 +202,8 @@ public class MainFrame extends JFrame {
 
         io.submit(() -> {
             try {
-                String raw = WeatherClient.rawForecast(latitude, longitude);
-                WeatherData d = WeatherClient.parseForecast(raw, city);
-                d.lat = latitude;
-                d.lon = longitude;
-                try {
-                    WeatherClient.parseAir(Json.parse(WeatherClient.rawAir(latitude, longitude)), d);
-                } catch (Exception ignore) {
-                    d.hasAir = false;
-                }
-                prefs.saveCache(raw);
+                WeatherData d = WeatherClient.fetchAll(prefs.provider(), latitude, longitude, city);
+                prefs.saveCache(WeatherClient.rawForecast(latitude, longitude));
                 prefs.setLast(city, latitude, longitude);
                 SwingUtilities.invokeLater(() -> {
                     busy = false;
@@ -219,7 +212,8 @@ public class MainFrame extends JFrame {
                     panel.setData(d, false);
                     sidebar.select(city);
                     sidebar.repaint();
-                    status("已更新 " + city + " · " + WeatherPanel.timeText(d.updatedAt));
+                    status("已更新 " + city + " · " + WeatherPanel.timeText(d.updatedAt)
+                            + " · 数据源 " + (d.source == null || d.source.isEmpty() ? "Open-Meteo" : d.source));
                 });
             } catch (Exception ex) {
                 SwingUtilities.invokeLater(() -> {
@@ -350,6 +344,24 @@ public class MainFrame extends JFrame {
 
         menu.add(new JSeparator());
 
+        JMenuItem styleItem = new JMenuItem("界面风格：" + Theme.styleName(prefs.uiStyle()));
+        styleItem.addActionListener(e -> {
+            prefs.setUiStyle((prefs.uiStyle() + 1) % 3);
+            prefs.save();
+            applyTheme();
+            status("界面风格已切换为「" + Theme.styleName(prefs.uiStyle()) + "」");
+        });
+        menu.add(styleItem);
+
+        JMenuItem providerItem = new JMenuItem("数据源：" + WeatherClient.providerName(prefs.provider()));
+        providerItem.addActionListener(e -> {
+            prefs.setProvider((prefs.provider() + 1) % 4);
+            prefs.save();
+            status("数据源已切换为「" + WeatherClient.providerName(prefs.provider()) + "」，正在重新获取…");
+            reloadCurrent();
+        });
+        menu.add(providerItem);
+
         JMenuItem themeItem = new JMenuItem("外观：" + themeModeLabel());
         themeItem.addActionListener(e -> {
             prefs.setThemeMode((prefs.themeMode() + 1) % 3);
@@ -401,12 +413,12 @@ public class MainFrame extends JFrame {
         javax.swing.JOptionPane.showMessageDialog(this,
                 "<html><body style='width:300px;font-family:Microsoft YaHei UI'>"
                         + "<h3 style='margin:0 0 8px 0'>轻天气 · LightWeather</h3>"
-                        + "Windows 桌面版 v2.1（与 Android 版同一仓库）<br><br>"
-                        + "数据来源：<b>Open-Meteo</b>（免费、无需 API Key）<br>"
+                        + "Windows 桌面版 v3.0（与 Android 版同一仓库）<br><br>"
+                        + "数据来源：<b>Open-Meteo / wttr.in / MET Norway</b>（均可自动回退）<br>"
                         + "空气质量：Open-Meteo Air Quality API<br><br>"
                         + "纯 Java 17 + Swing 实现，零第三方依赖。<br>"
                         + "功能：实时天气 / 24 小时逐时 / 7 天趋势曲线 / 空气质量 / "
-                        + "生活指数 / 天气提醒 / 离线缓存 / 明暗主题 / 多城市。<br><br>"
+                        + "生活指数 / 天气提醒 / 离线缓存 / 明暗主题 / 三种界面风格 / 多城市。<br><br>"
                         + "快捷键：F5 刷新，Ctrl+F 搜索<br>"
                         + "缓存目录：" + Prefs.dataDir()
                         + "</body></html>",

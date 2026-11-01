@@ -68,4 +68,74 @@ public final class WeatherCodes {
             return false;
         }
     }
+
+    /** wttr.in / WorldWeatherOnline 代码 → WMO */
+    public static int fromWwo(int code) {
+        switch (code) {
+            case 113: return 0;
+            case 116: return 1;
+            case 119: return 2;
+            case 122: return 3;
+            case 143: case 248: case 260: return 45;
+            case 176: return 80;
+            case 179: return 85;
+            case 182: case 185: return 66;
+            case 200: return 95;
+            case 227: return 71;
+            case 230: return 75;
+            case 263: case 266: return 51;
+            case 281: case 284: return 56;
+            case 293: case 296: return 61;
+            case 299: case 302: return 63;
+            case 305: case 308: return 65;
+            case 311: case 314: return 66;
+            case 317: case 320: return 71;
+            case 323: case 326: return 71;
+            case 329: case 332: return 73;
+            case 335: case 338: return 75;
+            case 350: return 77;
+            case 353: return 80;
+            case 356: return 81;
+            case 359: return 82;
+            case 362: case 365: return 85;
+            case 368: case 371: return 85;
+            case 374: case 377: return 86;
+            case 386: case 389: return 95;
+            case 392: case 395: return 86;
+            default: return 3;
+        }
+    }
+
+    /** MET Norway symbol_code → WMO */
+    public static int fromMetSymbol(String symbol) {
+        if (symbol == null) return 3;
+        String s = symbol;
+        int us = s.indexOf('_');
+        if (us > 0 && (s.endsWith("_day") || s.endsWith("_night") || s.endsWith("_polartwilight"))) {
+            s = s.substring(0, us);
+        }
+        if (s.startsWith("clearsky")) return 0;
+        if (s.startsWith("fair")) return 1;
+        if (s.startsWith("partlycloudy")) return 2;
+        if (s.startsWith("cloudy")) return 3;
+        if (s.startsWith("fog")) return 45;
+        if (s.startsWith("lightrain")) return 61;
+        if (s.startsWith("rain")) return 63;
+        if (s.startsWith("heavyrain")) return 65;
+        if (s.startsWith("lightrainshowers")) return 80;
+        if (s.startsWith("rainshowers")) return 80;
+        if (s.startsWith("heavyrainshowers")) return 82;
+        if (s.startsWith("lightsleet")) return 66;
+        if (s.startsWith("sleet")) return 66;
+        if (s.startsWith("lightsnow")) return 71;
+        if (s.startsWith("snow")) return 73;
+        if (s.startsWith("heavysnow")) return 75;
+        if (s.startsWith("lightsnowshowers")) return 85;
+        if (s.startsWith("snowshowers")) return 85;
+        if (s.startsWith("heavysnowshowers")) return 86;
+        if (s.startsWith("rainandthunder")) return 95;
+        if (s.startsWith("snowandthunder")) return 95;
+        if (s.startsWith("sleetandthunder")) return 95;
+        return 3;
+    }
 }
