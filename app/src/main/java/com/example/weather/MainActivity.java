@@ -100,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
         rebuildCityMenu();
     }
 
-    private boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_unit) {
             WeatherPrefs.setF(this, !WeatherPrefs.isF(this));
