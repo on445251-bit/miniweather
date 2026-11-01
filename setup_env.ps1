@@ -76,10 +76,10 @@ if (-not (Test-Path $sdkmanager)) {
 
 Write-Host "[INFO] 接受许可协议…" -ForegroundColor Gray
 # Windows 没有 yes，用循环管道传入 y 给 sdkmanager
-1..30 | ForEach-Object { "y" } | & $sdkmanager --licenses | Out-Null
+1..30 | ForEach-Object { "y" } | & $sdkmanager --licenses --sdk_root="$SdkRoot" | Out-Null
 
 Write-Host "[INFO] 安装编译包（首次约需下载数百 MB）…" -ForegroundColor Gray
-& $sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+& $sdkmanager --sdk_root="$SdkRoot" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
 # ---- 4. 写出环境变量 ----
 $jhome = (Get-Item (Get-Command java).Source).Directory.Parent.FullName
