@@ -1,0 +1,21 @@
+# Android / Gradle
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+/build/
+*/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# 本地环境脚本生成的文件（含 SDK 下载）
+android-sdk/
+env.local
+env.local.ps1
+
+# 截图分享缓存
+*.png
+!app/src/main/res/**/*.png
+!app/src/main/res/**/*.xml
