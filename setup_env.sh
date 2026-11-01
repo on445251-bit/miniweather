@@ -84,11 +84,12 @@ export ANDROID_HOME="$SDK_ROOT"
 export ANDROID_SDK_ROOT="$SDK_ROOT"
 
 # ---- 3. 安装编译依赖 ----
-SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+SDKMANAGER="$(dirname "$(find "$SDK_ROOT" -name sdkmanager -type f | head -1)")/sdkmanager"
 if [ ! -x "$SDKMANAGER" ]; then
   echo "[ERR] 未找到 sdkmanager，请检查 SDK 安装。"
   exit 1
 fi
+export PATH="$(dirname "$SDKMANAGER"):$PATH"
 
 echo "[INFO] 接受许可协议…"
 yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
