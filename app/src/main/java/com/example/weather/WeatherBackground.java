@@ -100,7 +100,7 @@ public class WeatherBackground extends View {
             for (Cloud c : clouds) {
                 if (cloudDrawable != null) {
                     cloudDrawable.setAlpha(120);
-                    cloudDrawable.setBounds((int) c.x, (int) c.y, (int) c.x + c.size, (int) c.y + c.size);
+                    cloudDrawable.setBounds((int) c.x, (int) c.y, (int) (c.x + c.size), (int) (c.y + c.size));
                     cloudDrawable.draw(canvas);
                 }
             }
@@ -108,12 +108,12 @@ public class WeatherBackground extends View {
     }
 
     // ---- 粒子 ----
-    static class Drop { float x, y, vx, vy; Drop(int w, int h, Random r) {
-        x = r.nextInt(w); y = r.nextInt(h); vy = 8 + r.nextInt(8); vx = 2; } }
-    static class Star { float x, y, r, phase, tw; Star(int w, int h, Random r) {
-        x = r.nextInt(w); y = r.nextInt(h); r = 1 + r.nextInt(2); phase = r.nextInt(100); } }
-    static class Cloud { float x, y, vx, size; Cloud(int w, int h, Random r) {
-        x = r.nextInt(w); y = 20 + r.nextInt(h / 3); size = 60 + r.nextInt(60); vx = 0.2f + r.nextFloat() * 0.4f; } }
+    static class Drop { float x, y, vx, vy; Drop(int w, int h, Random rd) {
+        x = rd.nextInt(w); y = rd.nextInt(h); vy = 8 + rd.nextInt(8); vx = 2; } }
+    static class Star { float x, y, r, phase, tw; Star(int w, int h, Random rd) {
+        x = rd.nextInt(w); y = rd.nextInt(h); r = 1 + rd.nextInt(2); phase = rd.nextInt(100); } }
+    static class Cloud { float x, y, vx, size; Cloud(int w, int h, Random rd) {
+        x = rd.nextInt(w); y = 20 + rd.nextInt(h / 3); size = 60 + rd.nextInt(60); vx = 0.2f + rd.nextFloat() * 0.4f; } }
 
     @Override
     protected void onDetachedFromWindow() {
