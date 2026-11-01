@@ -11,6 +11,8 @@ jobs:
   build:
     name: Build Release APK
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: ${{ github.workspace }}/android-sdk
 
     steps:
       - name: Checkout
@@ -24,7 +26,7 @@ jobs:
         run: |
           if [ -f "settings.gradle" ] || [ -f "settings.gradle.kts" ]; then
             echo "dir=." >> "$GITHUB_OUTPUT"
-          elif [ -f "WeatherApp/settings.gradle" ] || [ -f "WeatherApp/settings.gradle.kts" ]; then
+          elif [ -f "WeatherApp/settings.gradle" ]; then
             echo "dir=WeatherApp" >> "$GITHUB_OUTPUT"
           else
             echo "::error::未找到 settings.gradle，请确认项目位置"
@@ -37,11 +39,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install SDK packages
+      # 手动安装 Android SDK（不依赖第三方 setup-android action，更稳定）
+      - name: Install Android SDK
         run: |
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          cd "$ANDROID_HOME/cmdline-tools"
+          echo "[INFO] 下载 Command-Line Tools…"
+          curl -fSL --retry 3 -o clt.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q clt.zip
+          rm clt.zip
+          mv cmdline-tools latest
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
+          echo "[INFO] 接受许可协议…"
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          echo "[INFO] 安装编译包（首次约数百 MB）…"
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Grant execute permission for gradlew
@@ -59,7 +72,7 @@ jobs:
           path: ${{ steps.proj.outputs.dir }}/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
-      # 可选：打 tag（如 v1.0）触发时，自动生成 GitHub Release 并附上 APK
+      # 可选：打 tag（如 v1.0）触发时，自动生成 GitHub Release 并附 APK
       - name: Create GitHub Release (on tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
