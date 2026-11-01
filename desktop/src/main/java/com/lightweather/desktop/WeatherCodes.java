@@ -1,0 +1,71 @@
+package com.lightweather.desktop;
+
+/** WMO 天气代码 → 中文描述 / 图标种类 */
+public final class WeatherCodes {
+
+    private WeatherCodes() {
+    }
+
+    public enum Kind { SUN, MOON, PARTLY, PARTLY_NIGHT, CLOUD, FOG, DRIZZLE, RAIN, SHOWERS, SNOW, STORM }
+
+    public static String desc(int code) {
+        switch (code) {
+            case 0: return "晴";
+            case 1: return "晴间多云";
+            case 2: return "多云";
+            case 3: return "阴";
+            case 45: return "雾";
+            case 48: return "雾凇";
+            case 51: return "小毛毛雨";
+            case 53: return "毛毛雨";
+            case 55: return "大毛毛雨";
+            case 56: return "冻毛毛雨";
+            case 57: return "强冻毛毛雨";
+            case 61: return "小雨";
+            case 63: return "中雨";
+            case 65: return "大雨";
+            case 66: return "冻雨";
+            case 67: return "强冻雨";
+            case 71: return "小雪";
+            case 73: return "中雪";
+            case 75: return "大雪";
+            case 77: return "雪粒";
+            case 80: return "阵雨";
+            case 81: return "强阵雨";
+            case 82: return "暴雨";
+            case 85: return "阵雪";
+            case 86: return "强阵雪";
+            case 95: return "雷阵雨";
+            case 96: return "雷阵雨伴冰雹";
+            case 99: return "强雷暴伴冰雹";
+            default: return "未知";
+        }
+    }
+
+    public static Kind kind(int code, boolean night) {
+        if (code == 0) return night ? Kind.MOON : Kind.SUN;
+        if (code == 1) return night ? Kind.PARTLY_NIGHT : Kind.PARTLY;
+        if (code == 2 || code == 3) return Kind.CLOUD;
+        if (code == 45 || code == 48) return Kind.FOG;
+        if (code >= 51 && code <= 57) return Kind.DRIZZLE;
+        if (code >= 61 && code <= 67) return Kind.RAIN;
+        if (code >= 71 && code <= 77) return Kind.SNOW;
+        if (code >= 80 && code <= 82) return Kind.SHOWERS;
+        if (code == 85 || code == 86) return Kind.SNOW;
+        if (code >= 95) return Kind.STORM;
+        return Kind.CLOUD;
+    }
+
+    /** 依据 "2026-11-01T14:00" 判断该小时是否属夜间（18:00–06:00） */
+    public static boolean isNightHour(String t) {
+        if (t == null) return false;
+        int i = t.indexOf('T');
+        if (i < 0 || t.length() < i + 3) return false;
+        try {
+            int hour = Integer.parseInt(t.substring(i + 1, i + 3));
+            return hour >= 18 || hour < 6;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+}

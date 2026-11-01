@@ -4,6 +4,18 @@
 
 ---
 
+## v2.1.0 — Windows 桌面版（LightWeather.exe）
+- 🖥 **新增 Windows 桌面客户端**（`desktop/`）：纯 Java 17 + Swing，零第三方依赖，`jpackage` 打包为免安装 `LightWeather.exe`（自带精简 JRE）
+- 🎨 **全自绘界面**：卡片、7 天温度曲线、天气图标、悬停高亮全部由 Java2D 手绘，无 UI 框架
+- 🌦 **功能与手机端对齐**：实况卡（随天气变色）、六宫格指标、天气提醒、空气质量、逐时预报（点击看详情）、7 天曲线与列表、日出日落/昼长、生活指数
+- 🏙 **多城市侧栏**：`＋` 收藏当前城市、行尾 `×` 移除（带确认）、点击切换
+- 🔍 **搜索**：城市名搜索，同名城市弹候选列表；`Ctrl+F` 聚焦、`Enter` 提交
+- 🎛 **单位与主题**：温度 ℃/℉、风速 4 种、气压 3 种；跟随系统 / 浅色 / 深色
+- 💾 **离线缓存**：缓存完整 API 原始 JSON，断网时渲染缓存并标注
+- 🤖 **新增工作流** `.github/workflows/desktop.yml`：Windows Runner 自动编译、打包并上传 `LightWeather-win64.zip`；打 tag 时附加到 Release
+- 🧪 **内置自检**：`--screenshot` / `--screenshot-frame` 离屏渲染截图、`--make-icon` 生成 ICO，便于 CI 与无桌面环境验证
+- 🔢 桌面版版本号 2.1.0；Android 版仍为 2.0.0（工程互不影响）
+
 ## v2.0.0 — 「轻天气 Pro」大版本更新
 - 🍃 **空气质量（AQI）**：接入 Open-Meteo Air Quality，展示欧洲 AQI 等级、建议、PM2.5/PM10/O₃/NO₂/SO₂ 浓度与首要污染物（新增 `AirQuality`）
 - 📈 **7 天温度曲线**：新增自绘 `TempCurveView`，渐变温度带 + 高低温折线 + 每日标签

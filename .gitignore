@@ -23,3 +23,7 @@ keystore.properties
 *.png
 !app/src/main/res/**/*.png
 !app/src/main/res/**/*.xml
+!desktop/docs/*.png
+
+# 桌面版构建产物
+desktop/build/

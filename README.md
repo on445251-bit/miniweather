@@ -4,14 +4,27 @@
 [![Release](https://img.shields.io/github/v/release/on445251-bit/miniweather?label=latest%20release)](https://github.com/on445251-bit/miniweather/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-一个**极轻量**的 Android 天气应用：零第三方 SDK、零 API Key、单 Activity、原生 ViewBinding、纯 Java。
+一个**极轻量**的天气应用，同一仓库两份实现：**Android**（Java + ViewBinding）与 **Windows 桌面版**（纯 Java 17 Swing，打包成 `LightWeather.exe`）。零第三方 SDK、零 API Key。
 
 > v2.0 起主打「看天气一眼就够」：当前实况、逐时降水、7 天温度曲线、空气质量、生活指数、天气提醒，全部在一屏内。
+> v2.1 新增 **Windows 桌面 EXE 版**（`desktop/`），与手机端功能对齐。
 
 ## 📦 下载 APK
 - **GitHub Actions 自动构建**：进 [Actions](https://github.com/on445251-bit/miniweather/actions) 页面，点最新的 `Build WeatherApp APK` 运行，右侧 **Artifacts** 下载 `weather-app-release`（解压得到 `app-debug.apk` / `app-release-unsigned.apk`）。
 - **正式版 Release**：在 [Releases](https://github.com/on445251-bit/miniweather/releases) 页面下载带版本号的 APK（打 `v*` tag 自动生成）。
 - 安装：`adb install app-debug.apk`（需开启手机“未知来源”安装权限）。
+
+## 🖥 下载桌面版（Windows）
+- 在 [Releases](https://github.com/on445251-bit/miniweather/releases) 下载 `LightWeather-win64.zip`，解压后双击 `LightWeather.exe` 即可运行（**自带精简 JRE，无需安装 Java**，也不需要管理员权限）。
+- 绿色版：不写注册表、不装服务，配置与缓存保存在 `%APPDATA%\LightWeather\`。
+
+![桌面版界面](desktop/docs/preview-window.png)
+
+| 浅色 | 深色 |
+| --- | --- |
+| ![浅色](desktop/docs/preview-light.png) | ![深色](desktop/docs/preview-dark.png) |
+
+桌面版特性：同 Android 端的实况/六宫格、7 天温度曲线、空气质量、生活指数、天气提醒、日出日落与昼长、逐时（点击查看详情）、多城市侧栏、三种单位切换、明暗主题、离线缓存、10 分钟自动刷新；界面全部由 Java2D 手绘（无 UI 框架、无第三方库）。
 
 ## 特性
 
@@ -91,6 +104,15 @@ export JAVA_HOME=/path/to/jdk17
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
+### 桌面版（Windows）
+只需 JDK 17（含 `jpackage`），不需要 Gradle、不需要 Android SDK：
+```powershell
+cd desktop
+.\build.ps1 -Package     # 编译 + jpackage 生成 build\dist\LightWeather\LightWeather.exe 与 LightWeather-win64.zip
+.\build.ps1 -Preview     # 只渲染预览图（离屏，不需要真实桌面）
+```
+> 生成安装器（`.msi`/`.exe` setup）需要额外装 [WiX Toolset](https://wixtoolset.org/)，本项目只产出免安装的 app-image + zip。
+
 ---
 
 ## ☁️ GitHub Actions 云端自动构建
@@ -138,6 +160,24 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 │       └── res/                     # 布局 / 矢量图标 / 主题
 ├── build.gradle
 ├── settings.gradle
+├── desktop/                         # Windows 桌面版（纯 JDK，独立构建）
+│   ├── build.ps1                    # 编译 / 预览图 / jpackage 打包
+│   ├── docs/                        # README 用的界面截图
+│   └── src/main/java/com/lightweather/desktop/
+│       ├── App.java                 # 入口（含 --screenshot / --make-icon 自检模式）
+│       ├── MainFrame.java           # 窗口外壳：顶栏搜索 + 城市侧栏 + 状态栏
+│       ├── WeatherPanel.java        # 全部卡片的自绘面板（核心 UI）
+│       ├── Theme.java               # 明暗配色与字体
+│       ├── Icons.java               # 天气图标（Java2D 矢量）
+│       ├── AppIcon.java             # 应用图标 + ICO 生成
+│       ├── Json.java                # 极简 JSON 解析器
+│       ├── WeatherClient.java       # Open-Meteo 请求与解析
+│       ├── WeatherData.java         # 数据模型
+│       ├── WeatherCodes.java        # WMO 代码 → 文案/图标类型
+│       ├── AirQuality.java          # AQI / UV 分级
+│       ├── LifeIndex.java           # 生活指数
+│       ├── WeatherAlert.java        # 天气提醒
+│       └── Prefs.java               # 设置与离线缓存（%APPDATA%）
 └── gradle/wrapper/                 # Gradle Wrapper（已就绪）
 ```
 
