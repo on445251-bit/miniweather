@@ -67,6 +67,8 @@ if ($Package) {
     & $jpackage --type app-image --name LightWeather `
         --input $jarDir --main-jar 'lightweather.jar' --main-class com.lightweather.desktop.App `
         --app-version 2.1.0 --vendor "LightWeather" --description "LightWeather desktop - open source weather client" `
+        --add-modules 'java.base,java.desktop,java.logging,java.xml,jdk.unsupported' `
+        --jlink-options '--strip-debug --no-header-files --no-man-pages --compress=1' `
         --java-options '-Dfile.encoding=UTF-8' --dest $dist @iconArg
     if ($LASTEXITCODE -ne 0) { throw "jpackage failed" }
 
