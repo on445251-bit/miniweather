@@ -74,7 +74,8 @@ else
   curl -fSL --retry 3 -o clt.zip "$URL"
   unzip -q clt.zip
   rm clt.zip
-  mv cmdline-tools "latest" 2>/dev/null || true
+  # 解压后是 cmdline-tools/cmdline-tools/，移动内层到 latest
+  mv cmdline-tools/cmdline-tools "latest" 2>/dev/null || mv cmdline-tools "latest" 2>/dev/null || true
   cd "$PROJECT_DIR"
   echo "[OK] Command-Line Tools 已就绪"
 fi
