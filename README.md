@@ -1,6 +1,15 @@
 # 轻天气 (WeatherApp)
 
+[![Build APK](https://github.com/on445251-bit/miniweather/actions/workflows/build.yml/badge.svg)](https://github.com/on445251-bit/miniweather/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/on445251-bit/miniweather?label=latest%20release)](https://github.com/on445251-bit/miniweather/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#)
+
 一个**极轻量**的 Android 天气应用：零第三方 SDK、零 API Key、单 Activity、原生 ViewBinding。
+
+## 📦 下载 APK
+- **GitHub Actions 自动构建**：进 [Actions](https://github.com/on445251-bit/miniweather/actions) 页面，点最新的 `Build WeatherApp APK` 运行，右侧 **Artifacts** 下载 `weather-app-release`（解压得到 `app-release.apk`）。
+- **正式版 Release**：在 [Releases](https://github.com/on445251-bit/miniweather/releases) 页面下载带版本号的 APK（打 `v*` tag 自动生成）。
+- 安装：`adb install app-release.apk`（需开启手机“未知来源”安装权限）。
 
 ## 特性
 - 🌤 当前天气：温度 / 天气状况 / 体感 / 湿度 / 风速
