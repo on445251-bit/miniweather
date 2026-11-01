@@ -74,8 +74,8 @@ else
   curl -fSL --retry 3 -o clt.zip "$URL"
   unzip -q clt.zip
   rm clt.zip
-  # 解压后是 cmdline-tools/cmdline-tools/，移动内层到 latest
-  mv cmdline-tools/cmdline-tools "latest" 2>/dev/null || mv cmdline-tools "latest" 2>/dev/null || true
+  # 必须放到 cmdline-tools/latest/，这是 sdkmanager 期望的标准布局
+  mv cmdline-tools latest 2>/dev/null || true
   cd "$PROJECT_DIR"
   echo "[OK] Command-Line Tools 已就绪"
 fi
@@ -84,7 +84,7 @@ export ANDROID_HOME="$SDK_ROOT"
 export ANDROID_SDK_ROOT="$SDK_ROOT"
 
 # ---- 3. 安装编译依赖 ----
-SDKMANAGER="$(dirname "$(find "$SDK_ROOT" -name sdkmanager -type f | head -1)")/sdkmanager"
+SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
 if [ ! -x "$SDKMANAGER" ]; then
   echo "[ERR] 未找到 sdkmanager，请检查 SDK 安装。"
   exit 1
@@ -92,10 +92,10 @@ fi
 export PATH="$(dirname "$SDKMANAGER"):$PATH"
 
 echo "[INFO] 接受许可协议…"
-yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+yes | "$SDKMANAGER" --licenses --sdk_root="$SDK_ROOT" >/dev/null 2>&1 || true
 
 echo "[INFO] 安装编译包（首次约需下载数百 MB，请耐心等待）…"
-"$SDKMANAGER" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+"$SDKMANAGER" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
 # ---- 4. 写出环境变量 ----
 cat > "$ENV_FILE" <<EOF
