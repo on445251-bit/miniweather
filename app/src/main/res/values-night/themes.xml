@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 夜间主题 -->
+    <style name="Theme.WeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/seed_dark</item>
+        <item name="android:colorBackground">#121212</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E0E0E0</item>
+        <item name="colorOnBackground">#E0E0E0</item>
+    </style>
+
+    <color name="card_bg">#401E1E1E</color>
+
+    <!-- 全屏闪屏主题（夜间） -->
+    <style name="Theme.WeatherApp.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/seed_dark</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/bg_night</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>
