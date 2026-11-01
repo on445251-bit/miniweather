@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">轻天气</string>
+    <string name="search_hint">搜索城市，如：北京 / Tokyo / Paris</string>
+    <string name="current_location">我的位置</string>
+    <string name="refresh">刷新</string>
+    <string name="error_network">网络异常，请稍后重试</string>
+    <string name="error_empty">未找到该城市，请检查名称</string>
+    <string name="locating">定位中…</string>
+    <string name="no_result">未输入城市名</string>
+    <string name="feels_like">体感 %s°</string>
+    <string name="humidity">湿度 %d%%</string>
+    <string name="wind">风速 %s km/h</string>
+    <string name="hourly">24 小时预报</string>
+    <string name="daily">7 天预报</string>
+    <string name="updated">更新于 %s</string>
+    <string name="menu_unit">切换 ℃ / ℉</string>
+    <string name="menu_manage">管理城市</string>
+    <string name="cities_title">我的城市</string>
+    <string name="add_city">添加当前城市</string>
+    <string name="unit_c">摄氏度 ℃</string>
+    <string name="unit_f">华氏度 ℉</string>
+    <string name="widget_label">轻天气</string>
+    <string name="widget_tap">点击刷新</string>
+    <string name="delete">删除</string>
+    <string name="share">分享截图</string>
+    <string name="share_text">— 来自「轻天气」</string>
+    <string name="share_fail">分享失败</string>
+</resources>
