@@ -6,6 +6,13 @@ android {
     namespace 'com.example.weather'
     compileSdk 34
 
+    // 读取本地签名配置（可选；不存在则跳过，Release 包将不签名）
+    def keystorePropsFile = rootProject.file("keystore.properties")
+    def keystoreProps = new Properties()
+    if (keystorePropsFile.exists()) {
+        keystoreProps.load(new FileInputStream(keystorePropsFile))
+    }
+
     defaultConfig {
         applicationId "com.example.weather"
         minSdk 26
@@ -14,14 +21,30 @@ android {
         versionName "1.0"
     }
 
+    // 若提供了 keystore.properties，则配置签名；否则 Release 包不签名（CI 用 Debug 包分发）
+    if (keystoreProps.containsKey('STORE_FILE')) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreProps['STORE_FILE'])
+                storePassword keystoreProps['STORE_PASSWORD']
+                keyAlias keystoreProps['KEY_ALIAS']
+                keyPassword keystoreProps['KEY_PASSWORD']
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (keystoreProps.containsKey('STORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             minifyEnabled false
+            // Debug 包自带 Android 调试签名，可直接安装
         }
     }
 
