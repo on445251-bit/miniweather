@@ -28,6 +28,8 @@ New-Item -ItemType Directory -Force -Path $classes | Out-Null
 
 if (-not $SkipCompile) {
     Write-Host "[1/4] Compiling Java sources ..." -ForegroundColor Cyan
+    if (Test-Path $classes) { Remove-Item -Recurse -Force $classes }
+    New-Item -ItemType Directory -Force -Path $classes | Out-Null
     $files = Get-ChildItem $srcDir -Recurse -Filter *.java | ForEach-Object { $_.FullName }
     & $javac -encoding UTF-8 -d $classes $files
     if ($LASTEXITCODE -ne 0) { throw "javac failed" }
