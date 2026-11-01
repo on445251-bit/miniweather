@@ -56,8 +56,9 @@ if ($env:ANDROID_HOME -and (Test-Path $env:ANDROID_HOME)) {
     Invoke-WebRequest -Uri $URL -OutFile $zip -UseBasicParsing
     Expand-Archive -Path $zip -DestinationPath $clt -Force
     Remove-Item $zip
-    # 重命名成 latest 以符合 sdkmanager 期望
-    $src = Join-Path $clt "cmdline-tools"
+    # 重命名成 latest 以符合 sdkmanager 期望（解压后是 cmdline-tools/cmdline-tools/）
+    $src = Join-Path $clt "cmdline-tools\cmdline-tools"
+    if (-not (Test-Path $src)) { $src = Join-Path $clt "cmdline-tools" }
     $dst = Join-Path $clt "latest"
     if (Test-Path $src) { Move-Item -Force $src $dst }
     Write-Host "[OK] Command-Line Tools 已就绪" -ForegroundColor Green
