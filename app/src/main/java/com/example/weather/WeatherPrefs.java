@@ -39,6 +39,15 @@ public final class WeatherPrefs {
     // 温度单位
     // =====================================================================
 
+    /** 主题：0 跟随系统 / 1 浅色 / 2 深色 */
+    public static int getThemeMode(Context c) {
+        return sp(c).getInt("theme_mode", 0);
+    }
+
+    public static void setThemeMode(Context c, int mode) {
+        sp(c).edit().putInt("theme_mode", mode).apply();
+    }
+
     public static boolean isF(Context c) {
         return "F".equals(sp(c).getString(K_UNIT, "C"));
     }

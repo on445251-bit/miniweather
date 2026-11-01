@@ -18,6 +18,17 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
     private final int[] pops;
     private final android.content.Context ctx;
 
+    /** 点击某个小时的回调 */
+    public interface OnHourClick {
+        void onHourClick(int index);
+    }
+
+    private OnHourClick click;
+
+    public void setOnHourClick(OnHourClick l) {
+        this.click = l;
+    }
+
     public HourlyAdapter(android.content.Context ctx, String[] times, int[] temps,
                          int[] codes, int[] pops) {
         this.ctx = ctx;
@@ -53,6 +64,10 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
             h.tvPop.setText("");
             h.tvPop.setVisibility(View.INVISIBLE);
         }
+
+        h.itemView.setOnClickListener(v -> {
+            if (click != null) click.onHourClick(h.getAdapterPosition());
+        });
     }
 
     @Override

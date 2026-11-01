@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -30,6 +31,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        applyThemeMode();
         super.onCreate(savedInstanceState);
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
@@ -159,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_about) {
             showAbout();
+            return true;
+        } else if (id == R.id.action_theme) {
+            pickTheme();
             return true;
         } else if (id == R.id.action_share) {
             shareShot();
@@ -522,8 +528,10 @@ public class MainActivity extends AppCompatActivity {
 
         // ---------- 逐小时 ----------
         if (d.hasHourly()) {
-            b.rvHourly.setAdapter(new HourlyAdapter(this, d.hourlyTime, d.hourlyTemp,
-                    d.hourlyCode, d.hourlyPrecipProb));
+            HourlyAdapter ha = new HourlyAdapter(this, d.hourlyTime, d.hourlyTemp,
+                    d.hourlyCode, d.hourlyPrecipProb);
+            ha.setOnHourClick(this::showHourDetail);
+            b.rvHourly.setAdapter(ha);
         } else {
             b.rvHourly.setAdapter(new HourlyAdapter(this, new String[0], new int[0],
                     new int[0], new int[0]));
@@ -649,6 +657,104 @@ public class MainActivity extends AppCompatActivity {
         }
         b.bg.setBackgroundResource(bgRes);
         b.bg.setMode(mode);
+    }
+
+    // =====================================================================
+    // 逐小时详情
+    // =====================================================================
+
+    /** 点击逐小时条目：弹出该小时的详情 */
+    private void showHourDetail(int i) {
+        WeatherData d = current;
+        if (d == null || d.hourlyTime == null || i < 0 || i >= d.hourlyTime.length) return;
+        String t = d.hourlyTime[i];
+        int code = arr(d.hourlyCode, i, d.currentCode);
+        int temp = arr(d.hourlyTemp, i, d.currentTemp);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(WeatherCodes.desc(code, this)).append("\n\n");
+        sb.append("温度　　").append(WeatherPrefs.fmtTempDeg(temp, this)).append('\n');
+        int pop = arr(d.hourlyPrecipProb, i, -1);
+        if (pop >= 0) sb.append("降水概率　").append(pop).append("%\n");
+        double prc = darr(d.hourlyPrecip, i, Double.NaN);
+        if (!Double.isNaN(prc)) {
+            sb.append("降水量　　").append(String.format(Locale.CHINA, "%.1f mm", prc)).append('\n');
+        }
+        int hum = arr(d.hourlyHumidity, i, -1);
+        if (hum >= 0) sb.append("湿度　　　").append(hum).append("%\n");
+        double wind = darr(d.hourlyWind, i, Double.NaN);
+        if (!Double.isNaN(wind)) {
+            sb.append("风速　　　").append(WeatherPrefs.fmtWind(wind, this)).append(' ')
+                    .append(WeatherPrefs.windUnitLabel(this)).append('\n');
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(hourTitle(t))
+                .setMessage(sb.toString().trim())
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    /** "2026-11-01T14:00" → "今天 14:00" */
+    private String hourTitle(String t) {
+        if (t == null) return "";
+        int sep = t.indexOf('T');
+        String datePart = sep > 0 ? t.substring(0, sep) : "";
+        String timePart = sep >= 0 ? t.substring(sep + 1) : t;
+        if (timePart.length() > 5) timePart = timePart.substring(0, 5);
+        String day = "";
+        try {
+            LocalDate date = LocalDate.parse(datePart);
+            LocalDate today = LocalDate.now();
+            if (date.equals(today)) {
+                day = "今天";
+            } else if (date.equals(today.plusDays(1))) {
+                day = "明天";
+            } else {
+                String[] w = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+                day = w[date.getDayOfWeek().getValue() - 1];
+            }
+        } catch (Exception ignore) {
+        }
+        return (day.isEmpty() ? "" : day + " ") + timePart;
+    }
+
+    private static int arr(int[] a, int i, int def) {
+        return a != null && i >= 0 && i < a.length ? a[i] : def;
+    }
+
+    private static double darr(double[] a, int i, double def) {
+        return a != null && i >= 0 && i < a.length ? a[i] : def;
+    }
+
+    // =====================================================================
+    // 主题（跟随系统 / 浅色 / 深色）
+    // =====================================================================
+
+    private void applyThemeMode() {
+        int mode = WeatherPrefs.getThemeMode(this);
+        int target = mode == 1 ? AppCompatDelegate.MODE_NIGHT_NO
+                : mode == 2 ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        if (AppCompatDelegate.getDefaultNightMode() != target) {
+            AppCompatDelegate.setDefaultNightMode(target);
+        }
+    }
+
+    private void pickTheme() {
+        String[] items = {
+                getString(R.string.theme_auto),
+                getString(R.string.theme_light),
+                getString(R.string.theme_dark)};
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.menu_theme)
+                .setSingleChoiceItems(items, WeatherPrefs.getThemeMode(this), (d, which) -> {
+                    d.dismiss();
+                    WeatherPrefs.setThemeMode(this, which);
+                    applyThemeMode();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     // =====================================================================

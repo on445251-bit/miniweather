@@ -44,6 +44,10 @@
     <string name="menu_press">气压单位</string>
     <string name="menu_manage">管理城市</string>
     <string name="menu_about">关于</string>
+    <string name="menu_theme">外观主题</string>
+    <string name="theme_auto">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
     <string name="share">分享截图</string>
     <string name="share_text">— 来自「轻天气」</string>
     <string name="share_fail">分享失败</string>
