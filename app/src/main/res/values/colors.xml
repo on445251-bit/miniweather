@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 主题色 -->
+    <color name="seed">#1E88E5</color>
+    <color name="seed_dark">#1565C0</color>
+
+    <!-- 半透明卡片背景（日间） -->
+    <color name="card_bg">#40FFFFFF</color>
+    <!-- 顶部状态栏图标颜色 -->
+    <color name="status_bar_scrim">#00000000</color>
+</resources>
