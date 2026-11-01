@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 固定快捷项：我的位置 -->
+    <group android:id="@+id/grp_fixed" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_myloc"
+            android:title="@string/current_location"
+            android:icon="@drawable/ic_loc" />
+    </group>
+    <item
+        android:id="@+id/nav_add"
+        android:title="@string/add_city"
+        android:icon="@drawable/ic_loc" />
+    <group android:id="@+id/grp_cities" android:checkableBehavior="single" />
+</menu>
