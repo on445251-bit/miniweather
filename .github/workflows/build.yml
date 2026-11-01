@@ -42,24 +42,23 @@ jobs:
       # 手动安装 Android SDK（不依赖第三方 setup-android action，更稳定）
       - name: Install Android SDK
         run: |
-          mkdir -p "$ANDROID_HOME"
-          cd "$ANDROID_HOME"
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          cd "$ANDROID_HOME/cmdline-tools"
           echo "[INFO] 下载 Command-Line Tools…"
           curl -fSL --retry 3 -o clt.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q clt.zip
           rm clt.zip
-          # 自适应定位 sdkmanager 所在 bin 目录（兼容不同解压结构）
-          SDK_BIN="$(dirname "$(find "$ANDROID_HOME" -name sdkmanager -type f | head -1)")"
-          echo "SDK_BIN=$SDK_BIN"
-          # 关键：同一 step 内必须 export PATH，否则 sdkmanager 找不到（GITHUB_PATH 下个 step 才生效）
+          # 必须放到 cmdline-tools/latest/ 才是 sdkmanager 期望的标准布局
+          mv cmdline-tools latest 2>/dev/null || true
+          SDK_BIN="$ANDROID_HOME/cmdline-tools/latest/bin"
           export PATH="$SDK_BIN:$PATH"
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
           echo "$SDK_BIN" >> "$GITHUB_PATH"
           echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
           echo "[INFO] 接受许可协议…"
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          yes | sdkmanager --licenses --sdk_root="$ANDROID_HOME" >/dev/null 2>&1 || true
           echo "[INFO] 安装编译包（首次约数百 MB）…"
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Grant execute permission for gradlew
         working-directory: ${{ steps.proj.outputs.dir }}
