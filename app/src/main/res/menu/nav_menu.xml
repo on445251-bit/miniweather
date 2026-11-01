@@ -11,5 +11,9 @@
         android:id="@+id/nav_add"
         android:title="@string/add_city"
         android:icon="@drawable/ic_loc" />
+    <item
+        android:id="@+id/nav_manage"
+        android:title="@string/manage_title"
+        android:icon="@drawable/ic_loc" />
     <group android:id="@+id/grp_cities" android:checkableBehavior="single" />
 </menu>

@@ -5,6 +5,7 @@ plugins {
 android {
     namespace 'com.example.weather'
     compileSdk 34
+    buildToolsVersion "34.0.0"
 
     // 读取本地签名配置（可选；不存在则跳过，Release 包将不签名）
     def keystorePropsFile = rootProject.file("keystore.properties")
@@ -17,8 +18,8 @@ android {
         applicationId "com.example.weather"
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0.0"
     }
 
     // 若提供了 keystore.properties，则配置签名；否则 Release 包不签名（CI 用 Debug 包分发）

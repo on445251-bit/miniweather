@@ -9,20 +9,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/** 24 小时逐小时预报 */
 public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
 
     private final String[] times;
     private final int[] temps;
     private final int[] codes;
+    private final int[] pops;
     private final android.content.Context ctx;
-    private final boolean night;
 
-    public HourlyAdapter(android.content.Context ctx, boolean night, String[] times, int[] temps, int[] codes) {
+    public HourlyAdapter(android.content.Context ctx, String[] times, int[] temps,
+                         int[] codes, int[] pops) {
         this.ctx = ctx;
-        this.night = night;
         this.times = times;
         this.temps = temps;
         this.codes = codes;
+        this.pops = pops;
     }
 
     @NonNull
@@ -36,12 +38,21 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         String t = times[pos];
-        // t 形如 2026-11-01T14:00
-        String label = t.contains("T") ? t.substring(t.indexOf('T') + 1) : t;
+        String label = clock(t);
         if (pos == 0) label = "现在";
         h.tvTime.setText(label);
-        h.ivIcon.setImageResource(WeatherCodes.icon(codes[pos], night));
-        h.tvTemp.setText(WeatherPrefs.fmtTemp(temps[pos], ctx) + "°");
+
+        h.ivIcon.setImageResource(WeatherCodes.icon(codes[pos], isNightHour(t)));
+        h.tvTemp.setText(WeatherPrefs.fmtTempDeg(temps[pos], ctx));
+
+        int pop = pops != null && pos < pops.length ? pops[pos] : 0;
+        if (pop >= 20) {
+            h.tvPop.setText(pop + "%");
+            h.tvPop.setVisibility(View.VISIBLE);
+        } else {
+            h.tvPop.setText("");
+            h.tvPop.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -49,13 +60,35 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
         return times == null ? 0 : times.length;
     }
 
+    /** "2026-11-01T14:00" → "14:00" */
+    private static String clock(String t) {
+        if (t == null) return "";
+        int i = t.indexOf('T');
+        return i >= 0 && t.length() >= i + 6 ? t.substring(i + 1, i + 6) : t;
+    }
+
+    /** 依据小时判断昼夜（18:00–06:00 视为夜间） */
+    private static boolean isNightHour(String t) {
+        if (t == null) return WeatherCodes.isNightNow();
+        int i = t.indexOf('T');
+        if (i < 0 || t.length() < i + 3) return WeatherCodes.isNightNow();
+        try {
+            int hour = Integer.parseInt(t.substring(i + 1, i + 3));
+            return hour >= 18 || hour < 6;
+        } catch (Exception e) {
+            return WeatherCodes.isNightNow();
+        }
+    }
+
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvTime, tvTemp;
+        TextView tvTime, tvTemp, tvPop;
         ImageView ivIcon;
+
         VH(View v) {
             super(v);
             tvTime = v.findViewById(R.id.tv_time);
             tvTemp = v.findViewById(R.id.tv_temp);
+            tvPop = v.findViewById(R.id.tv_pop);
             ivIcon = v.findViewById(R.id.iv_icon);
         }
     }

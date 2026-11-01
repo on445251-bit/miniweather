@@ -1,28 +1,82 @@
 <resources>
     <string name="app_name">轻天气</string>
+
+    <!-- 搜索 -->
     <string name="search_hint">搜索城市，如：北京 / Tokyo / Paris</string>
     <string name="current_location">我的位置</string>
-    <string name="refresh">刷新</string>
-    <string name="error_network">网络异常，请稍后重试</string>
-    <string name="error_empty">未找到该城市，请检查名称</string>
     <string name="locating">定位中…</string>
     <string name="no_result">未输入城市名</string>
+    <string name="error_empty">未找到该城市，请检查名称</string>
+    <string name="error_network">网络异常，请稍后重试</string>
+    <string name="error_offline">网络异常，且没有可用的离线数据</string>
+    <string name="refresh">刷新</string>
+
+    <!-- 当前天气 -->
     <string name="feels_like">体感 %s°</string>
     <string name="humidity">湿度 %d%%</string>
     <string name="wind">风速 %s km/h</string>
+    <string name="m_feels">体感</string>
+    <string name="m_humidity">湿度</string>
+    <string name="m_wind">风</string>
+    <string name="m_pressure">气压</string>
+    <string name="m_cloud">云量</string>
+    <string name="m_precip">降水</string>
+
+    <!-- 预报 -->
     <string name="hourly">24 小时预报</string>
     <string name="daily">7 天预报</string>
+    <string name="trend">气温趋势</string>
     <string name="updated">更新于 %s</string>
-    <string name="menu_unit">切换 ℃ / ℉</string>
+    <string name="updated_cached">缓存数据 · 更新于 %s</string>
+
+    <!-- 空气质量 / 日出日落 / 生活指数 -->
+    <string name="air_title">空气质量指数</string>
+    <string name="air_unknown">暂无数据</string>
+    <string name="sunrise">日出</string>
+    <string name="sunset">日落</string>
+    <string name="daylight">日照时长</string>
+    <string name="life_index">生活指数</string>
+    <string name="section_detail">详细数据</string>
+
+    <!-- 菜单 -->
+    <string name="menu_unit">温度单位</string>
+    <string name="menu_wind">风速单位</string>
+    <string name="menu_press">气压单位</string>
     <string name="menu_manage">管理城市</string>
-    <string name="cities_title">我的城市</string>
-    <string name="add_city">添加当前城市</string>
-    <string name="unit_c">摄氏度 ℃</string>
-    <string name="unit_f">华氏度 ℉</string>
-    <string name="widget_label">轻天气</string>
-    <string name="widget_tap">点击刷新</string>
-    <string name="delete">删除</string>
+    <string name="menu_about">关于</string>
     <string name="share">分享截图</string>
     <string name="share_text">— 来自「轻天气」</string>
     <string name="share_fail">分享失败</string>
+
+    <!-- 单位 -->
+    <string name="unit_c">摄氏度 ℃</string>
+    <string name="unit_f">华氏度 ℉</string>
+    <string name="unit_kmh">千米/小时 km/h</string>
+    <string name="unit_ms">米/秒 m/s</string>
+    <string name="unit_mph">英里/小时 mph</string>
+    <string name="unit_bft">蒲福风级（级）</string>
+    <string name="unit_hpa">百帕 hPa</string>
+    <string name="unit_mmhg">毫米汞柱 mmHg</string>
+    <string name="unit_inhg">英寸汞柱 inHg</string>
+
+    <!-- 城市管理 -->
+    <string name="cities_title">我的城市</string>
+    <string name="add_city">添加当前城市</string>
+    <string name="delete">删除</string>
+    <string name="manage_title">管理城市</string>
+    <string name="manage_empty">还没有保存的城市</string>
+    <string name="delete_confirm">确定删除「%s」？</string>
+    <string name="city_exists">已存在：%s</string>
+    <string name="city_added">已添加：%s</string>
+    <string name="city_removed">已删除：%s</string>
+    <string name="multi_match">「%s」有多个匹配结果</string>
+
+    <!-- 关于 -->
+    <string name="about_title">关于轻天气</string>
+    <string name="about_text">轻天气 v2.0.0\n\n一个极简的 Android 天气应用：\n· 实时天气与体感温度\n· 24 小时逐小时预报\n· 7 天预报与气温趋势曲线\n· 空气质量（AQI / PM2.5 / PM10 / O₃ / NO₂）\n· 生活指数（穿衣 / 紫外线 / 洗车 / 运动 / 晾晒 / 感冒）\n· 本地规则天气预警\n· 日出日落 · 昼夜动态背景\n· 多城市管理 · 桌面小部件 · 截图分享\n· 温度 / 风速 / 气压单位切换\n\n数据来源：Open-Meteo（开源、免费、无需 API Key）\n界面：Material 3 · 零第三方 SDK · 离线可看最近数据</string>
+
+    <!-- 小部件 -->
+    <string name="widget_label">轻天气</string>
+    <string name="widget_tap">点击刷新</string>
+    <string name="widget_desc">轻天气 · 小部件</string>
 </resources>
