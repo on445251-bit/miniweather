@@ -1,0 +1,4 @@
+// 顶层 build 文件（轻量：不引入额外根级插件）
+plugins {
+    id 'com.android.application' version '8.1.4' apply false
+}
