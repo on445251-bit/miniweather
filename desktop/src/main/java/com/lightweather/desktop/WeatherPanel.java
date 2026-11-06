@@ -226,8 +226,8 @@ public class WeatherPanel extends JPanel implements Scrollable {
                 y += 118 + GAP;
             }
             if (data.hasHourly()) {
-                cards.add(new Card(HOURLY, PAD, y, cw, 164));
-                y += 164 + GAP;
+                cards.add(new Card(HOURLY, PAD, y, cw, 176));
+                y += 176 + GAP;
             }
             if (data.hasDaily()) {
                 cards.add(new Card(CURVE, PAD, y, cw, 210));
@@ -523,12 +523,23 @@ public class WeatherPanel extends JPanel implements Scrollable {
             g.drawString(tp, cx + (cell - fm.stringWidth(tp)) / 2, top + 80);
 
             int pop = data.hourlyPrecipProb[i];
+            // 降水概率小柱：一眼看出雨什么时候下（0% 也画空轨道，保持基线整齐）
+            int barW = 30;
+            int barX = cx + (cell - barW) / 2;
+            int barY = top + 88;
+            g.setColor(theme.dark ? new Color(255, 255, 255, 32) : new Color(0, 0, 0, 18));
+            g.fill(new RoundRectangle2D.Double(barX, barY, barW, 4, 4, 4));
+            int fillW = Math.round(barW * Math.min(100, Math.max(0, pop)) / 100f);
+            if (fillW > 0) {
+                g.setColor(pop >= 60 ? new Color(0x1E88E5) : new Color(0x64B5F6));
+                g.fill(new RoundRectangle2D.Double(barX, barY, fillW, 4, 4, 4));
+            }
             if (pop >= 20) {
                 g.setFont(theme.small);
                 g.setColor(new Color(0x42A5F5));
                 fm = g.getFontMetrics();
                 String ps = pop + "%";
-                g.drawString(ps, cx + (cell - fm.stringWidth(ps)) / 2, top + 100);
+                g.drawString(ps, cx + (cell - fm.stringWidth(ps)) / 2, top + 106);
             }
 
             final int idx = i;
@@ -764,7 +775,7 @@ public class WeatherPanel extends JPanel implements Scrollable {
         String left = "数据来源 " + src + " · 无需 API Key";
         g.drawString(left, c.x + 4, c.y + 24);
         if (data != null) {
-            String right = "轻天气桌面版 v3.0 · " + timeText(data.updatedAt);
+            String right = "轻天气桌面版 v3.1 · " + timeText(data.updatedAt);
             FontMetrics fm = g.getFontMetrics();
             g.drawString(right, c.x + c.w - fm.stringWidth(right) - 4, c.y + 24);
         }

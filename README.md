@@ -24,7 +24,7 @@
 | --- | --- |
 | ![浅色](desktop/docs/preview-light.png) | ![深色](desktop/docs/preview-dark.png) |
 
-桌面版特性：同 Android 端的实况/六宫格、7 天温度曲线、空气质量、生活指数、天气提醒、日出日落与昼长、逐时（点击查看详情）、多城市侧栏、三种单位切换、明暗主题、**三种界面风格**、**多数据源**、离线缓存、10 分钟自动刷新；界面全部由 Java2D 手绘（无 UI 框架、无第三方库）。
+桌面版特性：同 Android 端的实况/六宫格、7 天温度曲线、空气质量、生活指数、天气提醒、日出日落与昼长、逐时（点击查看详情）、多城市侧栏、三种单位切换、明暗主题、**三种界面风格**、**多数据源**、**逐时降水概率柱**、离线缓存、10 分钟自动刷新；**最小化/关闭收进系统托盘**（托盘右键可刷新与退出，悬停看实时温度）、**记住窗口大小与位置**；界面全部由 Java2D 手绘（无 UI 框架、无第三方库）。
 
 ## 特性
 
@@ -103,6 +103,7 @@ export ANDROID_HOME=/path/to/android-sdk
 export JAVA_HOME=/path/to/jdk17
 ./gradlew assembleDebug          # 调试包
 # 或 ./gradlew assembleRelease   # 已开启混淆与资源压缩
+./gradlew :app:testDebugUnitTest # Robolectric 冒烟测试（布局/主题/Activity/序列化）
 ```
 
 ### 安装到手机

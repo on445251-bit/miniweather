@@ -24,4 +24,9 @@
 
     <!-- Hero 卡（深蓝底 + 白字，晴天也清晰） -->
     <color name="hero_bg">#E6165FA8</color>
+
+    <!-- 逐时降水概率小柱（与桌面版一致的视觉语言） -->
+    <color name="precip_track">#1A000000</color>
+    <color name="precip_bar">#1E88E5</color>
+    <color name="precip_bar_soft">#64B5F6</color>
 </resources>

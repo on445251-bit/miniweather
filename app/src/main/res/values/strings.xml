@@ -77,7 +77,7 @@
 
     <!-- 关于 -->
     <string name="about_title">关于轻天气</string>
-    <string name="about_text">轻天气 v3.0.0\n\nMaterial 3 设计的极简天气应用：\n· 实时天气与体感温度\n· 24 小时逐小时预报（点按查看详情）\n· 7 天预报与气温趋势曲线\n· 空气质量（AQI / PM2.5 / PM10 / O₃ / NO₂）\n· 生活指数（穿衣 / 紫外线 / 洗车 / 运动 / 晾晒 / 感冒）\n· 本地规则天气预警\n· 日出日落 · 昼夜动态背景\n· 多城市管理 · 桌面小部件 · 截图分享\n· 温度 / 风速 / 气压单位切换\n· 三种数据源自动回退\n· 标准 / 玻璃 / 极简三种界面风格\n\n数据来源：Open-Meteo · wttr.in · MET Norway\n全部免费开源，无需 API Key</string>
+    <string name="about_text">轻天气 v3.1.0\n\nMaterial 3 设计的极简天气应用：\n· 实时天气与体感温度\n· 24 小时逐小时预报（降水概率柱 + 点按详情）\n· 7 天预报与气温趋势曲线\n· 空气质量（AQI / PM2.5 / PM10 / O₃ / NO₂）\n· 生活指数（穿衣 / 紫外线 / 洗车 / 运动 / 晾晒 / 感冒）\n· 本地规则天气预警\n· 日出日落 · 昼夜动态背景\n· 多城市管理 · 桌面小部件 · 截图分享\n· 温度 / 风速 / 气压单位切换\n· 三种数据源自动回退\n· 标准 / 玻璃 / 极简三种界面风格\n\n数据来源：Open-Meteo · wttr.in · MET Norway\n全部免费开源，无需 API Key</string>
 
     <!-- 数据源 / 界面风格 -->
     <string name="menu_provider">数据源</string>

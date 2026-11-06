@@ -11,4 +11,9 @@
 
     <color name="card_bg">#401E1E1E</color>
     <color name="hero_bg">#E60E2A47</color>
+
+    <!-- 夜间：轨道用半透明白，柱色保持品牌蓝的亮版本 -->
+    <color name="precip_track">#33FFFFFF</color>
+    <color name="precip_bar">#64B5F6</color>
+    <color name="precip_bar_soft">#42A5F5</color>
 </resources>

@@ -27,7 +27,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.Rectangle;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
@@ -68,6 +73,7 @@ public class MainFrame extends JFrame {
     private double lon;
     private boolean busy;
     private Timer autoTimer;
+    private TrayIcon trayIcon;
 
     public MainFrame() {
         super("轻天气 · LightWeather");
@@ -80,10 +86,84 @@ public class MainFrame extends JFrame {
         buildUi();
         seedCities();
         installKeys();
+        installTray();
+        restoreWindowBounds();
         restore();
         autoTimer = new Timer(10 * 60 * 1000, e -> reloadCurrent());
         autoTimer.stop();
         autoTimer.start();
+    }
+
+    // ---------------- 托盘 / 窗口状态 ----------------
+
+    /** 系统托盘：最小化或点关闭时收进托盘，悬停显示当前天气 */
+    private void installTray() {
+        if (!SystemTray.isSupported()) return;
+        try {
+            PopupMenu menu = new PopupMenu();
+            MenuItem show = new MenuItem("显示主窗口");
+            show.addActionListener(e -> restoreFromTray());
+            MenuItem refresh = new MenuItem("立即刷新");
+            refresh.addActionListener(e -> reloadCurrent());
+            MenuItem quit = new MenuItem("退出");
+            quit.addActionListener(e -> {
+                SystemTray.getSystemTray().remove(trayIcon);
+                System.exit(0);
+            });
+            menu.add(show);
+            menu.add(refresh);
+            menu.addSeparator();
+            menu.add(quit);
+
+            trayIcon = new TrayIcon(AppIcon.image(32), "轻天气", menu);
+            trayIcon.setImageAutoSize(true);
+            // 双击托盘图标 = 回到主窗口
+            trayIcon.addActionListener(e -> restoreFromTray());
+            SystemTray.getSystemTray().add(trayIcon);
+
+            addWindowStateListener(e -> {
+                if ((e.getNewState() & java.awt.Frame.ICONIFIED) != 0) hideToTray();
+            });
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    prefs.setWindowBounds(getBounds());
+                    prefs.save();
+                    if (prefs.closeToTray() && trayIcon != null) {
+                        e.getWindow().setVisible(false);
+                        e.getWindow().dispose();
+                        // 关闭按钮只收进托盘；真正退出走托盘右键菜单或 Ctrl+Q
+                        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                    }
+                }
+            });
+        } catch (Exception ignored) {
+            trayIcon = null;
+        }
+    }
+
+    private void hideToTray() {
+        if (trayIcon == null) return;
+        setVisible(false);
+    }
+
+    private void restoreFromTray() {
+        setVisible(true);
+        setState(java.awt.Frame.NORMAL);
+        toFront();
+        requestFocus();
+    }
+
+    private void restoreWindowBounds() {
+        Rectangle r = prefs.windowBounds();
+        if (r == null) return;
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        // 只接受仍落在屏幕内的位置，避免换显示器后窗口跑到屏幕外
+        boolean onScreen = r.x > -r.width && r.y > -r.height
+                && r.x < screen.width - 80 && r.y < screen.height - 80;
+        setSize(Math.max(860, r.width), Math.max(620, r.height));
+        if (onScreen) setLocation(r.x, r.y);
+        else setLocationRelativeTo(null);
     }
 
     private Theme resolveTheme() {
@@ -170,6 +250,7 @@ public class MainFrame extends JFrame {
                 currentData = d;
                 currentCached = true;
                 panel.setData(d, true);
+                updateTray();
             } catch (Exception ignored) {
                 panel.setLoading(true);
             }
@@ -212,6 +293,7 @@ public class MainFrame extends JFrame {
                     panel.setData(d, false);
                     sidebar.select(city);
                     sidebar.repaint();
+                    updateTray();
                     status("已更新 " + city + " · " + WeatherPanel.timeText(d.updatedAt)
                             + " · 数据源 " + (d.source == null || d.source.isEmpty() ? "Open-Meteo" : d.source));
                 });
@@ -287,6 +369,19 @@ public class MainFrame extends JFrame {
 
     private void status(String text) {
         if (statusBar != null) statusBar.show(text);
+    }
+
+    /** 托盘提示文字：城市 + 温度 + 天气，鼠标悬停即可看到，不必打开窗口 */
+    private void updateTray() {
+        if (trayIcon == null) return;
+        WeatherData d = currentData;
+        if (d == null) {
+            trayIcon.setToolTip("轻天气 · 正在获取天气…");
+            return;
+        }
+        String city = (d.city == null || d.city.isEmpty()) ? cityName : d.city;
+        trayIcon.setToolTip("轻天气 · " + city + " " + prefs.fmtTemp(d.currentTemp) + " "
+                + WeatherCodes.desc(d.currentCode) + (currentCached ? "（缓存）" : ""));
     }
 
     // ---------------- 自检（截图模式使用） ----------------
@@ -413,7 +508,7 @@ public class MainFrame extends JFrame {
         javax.swing.JOptionPane.showMessageDialog(this,
                 "<html><body style='width:300px;font-family:Microsoft YaHei UI'>"
                         + "<h3 style='margin:0 0 8px 0'>轻天气 · LightWeather</h3>"
-                        + "Windows 桌面版 v3.0（与 Android 版同一仓库）<br><br>"
+                        + "Windows 桌面版 v3.1（与 Android 版同一仓库）<br><br>"
                         + "数据来源：<b>Open-Meteo / wttr.in / MET Norway</b>（均可自动回退）<br>"
                         + "空气质量：Open-Meteo Air Quality API<br><br>"
                         + "纯 Java 17 + Swing 实现，零第三方依赖。<br>"

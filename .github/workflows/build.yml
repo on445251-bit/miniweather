@@ -69,6 +69,12 @@ jobs:
         working-directory: ${{ steps.proj.outputs.dir }}
         run: chmod +x gradlew
 
+      # Robolectric 冒烟测试：在 JVM 里真实 inflate 布局并启动 Activity，
+      # 可以在没有模拟器的 CI 上兜住「资源缺失 / 绑定为 null / 渲染 NPE」这类崩溃。
+      - name: Run unit tests (Robolectric)
+        working-directory: ${{ steps.proj.outputs.dir }}
+        run: ./gradlew :app:testDebugUnitTest --no-daemon
+
       - name: Build APKs
         working-directory: ${{ steps.proj.outputs.dir }}
         run: ./gradlew assembleRelease assembleDebug --no-daemon

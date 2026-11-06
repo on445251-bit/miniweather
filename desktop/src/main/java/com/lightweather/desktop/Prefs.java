@@ -118,6 +118,35 @@ public final class Prefs {
         p.setProperty("provider", String.valueOf(provider));
     }
 
+    // ---------------- 窗口位置 / 托盘 ----------------
+
+    /** 上次窗口位置与大小，未记录时返回 null */
+    public java.awt.Rectangle windowBounds() {
+        if (!p.containsKey("win_w") || !p.containsKey("win_h")) return null;
+        int w = i("win_w", 1060);
+        int h = i("win_h", 820);
+        int x = i("win_x", Integer.MIN_VALUE);
+        int y = i("win_y", Integer.MIN_VALUE);
+        return (x == Integer.MIN_VALUE || y == Integer.MIN_VALUE)
+                ? new java.awt.Rectangle(0, 0, w, h) : new java.awt.Rectangle(x, y, w, h);
+    }
+
+    public void setWindowBounds(java.awt.Rectangle r) {
+        p.setProperty("win_w", String.valueOf(r.width));
+        p.setProperty("win_h", String.valueOf(r.height));
+        p.setProperty("win_x", String.valueOf(r.x));
+        p.setProperty("win_y", String.valueOf(r.y));
+    }
+
+    /** 关闭窗口时是否最小化到托盘（默认 true） */
+    public boolean closeToTray() {
+        return !"0".equals(p.getProperty("close_to_tray", "1"));
+    }
+
+    public void setCloseToTray(boolean v) {
+        p.setProperty("close_to_tray", v ? "1" : "0");
+    }
+
     public boolean tempF() {
         return "F".equals(p.getProperty("temp_unit", "C"));
     }

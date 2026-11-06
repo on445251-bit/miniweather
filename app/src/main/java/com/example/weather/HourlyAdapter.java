@@ -1,5 +1,6 @@
 package com.example.weather;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Locale;
 
 /** 24 小时逐小时预报 */
 public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
@@ -57,8 +61,20 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
         h.tvTemp.setText(WeatherPrefs.fmtTempDeg(temps[pos], ctx));
 
         int pop = pops != null && pos < pops.length ? pops[pos] : 0;
+        // 降水概率小柱：宽度按百分比伸缩，概率越高柱越满
+        int trackPx = Math.round(38 * h.itemView.getResources().getDisplayMetrics().density);
+        int fillPx = Math.round(trackPx * Math.max(0, Math.min(100, pop)) / 100f);
+        ViewGroup.LayoutParams lp = h.precipFill.getLayoutParams();
+        if (lp != null) {
+            lp.width = fillPx;
+            h.precipFill.setLayoutParams(lp);
+        }
+        h.precipFill.setVisibility(pop >= 5 ? View.VISIBLE : View.INVISIBLE);
+        h.precipFill.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx,
+                pop >= 60 ? R.color.precip_bar : R.color.precip_bar_soft)));
+
         if (pop >= 20) {
-            h.tvPop.setText(pop + "%");
+            h.tvPop.setText(String.format(Locale.US, "%d%%", pop));
             h.tvPop.setVisibility(View.VISIBLE);
         } else {
             h.tvPop.setText("");
@@ -98,6 +114,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         TextView tvTime, tvTemp, tvPop;
         ImageView ivIcon;
+        View precipFill;
 
         VH(View v) {
             super(v);
@@ -105,6 +122,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.VH> {
             tvTemp = v.findViewById(R.id.tv_temp);
             tvPop = v.findViewById(R.id.tv_pop);
             ivIcon = v.findViewById(R.id.iv_icon);
+            precipFill = v.findViewById(R.id.precip_fill);
         }
     }
 }
